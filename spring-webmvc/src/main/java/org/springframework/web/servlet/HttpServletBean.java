@@ -139,6 +139,11 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	}
 
 	/**
+	 * 在 HttpServletBean 的 init() 方法中调用了 initServletBean() 这个方法，
+	 * 它是在 FrameworkServlet 类中实现的，
+	 * 主要作用是建立 WebApplicationContext 容器（有时也称上下文），
+	 * 并加载 SpringMVC 配置文件中定义的 Bean 到改容器中，
+	 * 最后将该容器添加到 ServletContext 中
 	 * Map config parameters onto bean properties of this servlet, and
 	 * invoke subclass initialization.
 	 * @throws ServletException if bean properties are invalid (or required

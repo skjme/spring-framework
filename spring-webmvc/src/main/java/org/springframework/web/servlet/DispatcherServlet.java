@@ -508,14 +508,23 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) {
+		// 文件上传解析
 		initMultipartResolver(context);
+		// 本地化解析
 		initLocaleResolver(context);
+		// 主题解析
 		initThemeResolver(context);
+		// 将请求映射到处理器 （返回一个HandlerExecutionChain，它包括一个处理器、多个HandlerInterceptor拦截器）；
 		initHandlerMappings(context);
+		// 支持多种类型的处理器(HandlerExecutionChain中的处理器)
 		initHandlerAdapters(context);
+		// 执行过程中遇到异常将交给HandlerExceptionResolver来解析
 		initHandlerExceptionResolvers(context);
+		// 当处理器没有返回逻辑视图名等相关信息时，自动将请求URL映射为逻辑视图名
 		initRequestToViewNameTranslator(context);
+		// 解析逻辑视图名到具体视图实现
 		initViewResolvers(context);
+		//
 		initFlashMapManager(context);
 	}
 
@@ -912,6 +921,12 @@ public class DispatcherServlet extends FrameworkServlet {
 
 
 	/**
+	 * DispatcherServlet 的 doService() 方法，主要是设置一些 request 属性，并调用 doDispatch() 方法进行请求分发处理，
+	 * doDispatch() 方法的主要过程是通过 HandlerMapping 获取 Handler，
+	 * 再找到用于执行它的 HandlerAdapter，
+	 * 执行 Handler 后得到 ModelAndView ，
+	 * ModelAndView 是连接“业务逻辑层”与“视图展示层”的桥梁，
+	 * 接下来就要通过 ModelAndView 获得 View，再通过它的 Model 对 View 进行渲染。
 	 * Exposes the DispatcherServlet-specific request attributes and delegates to {@link #doDispatch}
 	 * for the actual dispatching.
 	 */
@@ -949,6 +964,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
+			// 进行请求分发处理
 			doDispatch(request, response);
 		}
 		finally {
@@ -1011,6 +1027,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
 
+		// 获取当前请求的WebAsyncManager，如果没找到则创建并与请求关联
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 
 		try {
@@ -1018,9 +1035,11 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				 // 检查是否有 Multipart，有则将请求转换为 Multipart 请求
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
+				 // 遍历所有的 HandlerMapping 找到与请求对应的 Handler，并将其与一堆拦截器封装到 HandlerExecution 对象中。
 				// Determine handler for the current request.
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
@@ -1028,9 +1047,11 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 
+				// 遍历所有的 HandlerAdapter，找到可以处理该 Handler 的 HandlerAdapter
 				// Determine handler adapter for the current request.
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
+				 // 处理 last-modified 请求头 
 				// Process last-modified header, if supported by the handler.
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
@@ -1041,10 +1062,12 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				 // 遍历拦截器，执行它们的 preHandle() 方法
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
+				// 执行实际的处理程序
 				// Actually invoke the handler.
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
@@ -1053,6 +1076,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				applyDefaultViewName(processedRequest, mv);
+				// 遍历拦截器，执行它们的 postHandle() 方法
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
@@ -1063,6 +1087,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
+			 // 处理执行结果，是一个 ModelAndView 或 Exception，然后进行渲染
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
@@ -1074,6 +1099,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 		finally {
 			if (asyncManager.isConcurrentHandlingStarted()) {
+				// 遍历拦截器，执行它们的 afterCompletion() 方法  
 				// Instead of postHandle and afterCompletion
 				if (mappedHandler != null) {
 					mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response);
