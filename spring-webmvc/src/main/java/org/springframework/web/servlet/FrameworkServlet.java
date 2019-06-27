@@ -140,6 +140,14 @@ import org.springframework.web.util.WebUtils;
  */
 @SuppressWarnings("serial")
 public abstract class FrameworkServlet extends HttpServletBean implements ApplicationContextAware {
+	
+// FrameworkServlet抽象类扩展了同一个包下的HttpServletBean，HttpServletBean扩展了javax.servlet.http.HttpServlet。
+//	点开这个类源码可以看到，HttpServlet是一个抽象类，其方法定义主要用来处理每种类型的HTTP请求：
+//	doGet（GET请求），doPost（POST），doPut（PUT），doDelete（DELETE），doTrace（TRACE），doHead（HEAD） ，doOptions（OPTIONS）。
+//	FrameworkServlet通过将每个传入的请求调度到processRequest(HttpServletRequest request，HttpServletResponse response)来覆盖它们。
+//	processRequest是一个protected和final的方法，它构造出LocaleContext和ServletRequestAttributes对象，
+//	两者都可以在initContextHolders(request, localeContext, requestAttributes)之后访问。
+//	所有这些操作的关键代码 processRequest
 
 	/**
 	 * Suffix for WebApplicationContext namespaces. If a servlet of this class is
@@ -980,6 +988,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	}
 
 	/**
+	 * 请求处理
 	 * Process this request, publishing an event regardless of the outcome.
 	 * <p>The actual event handling is performed by the abstract
 	 * {@link #doService} template method.

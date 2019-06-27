@@ -160,6 +160,14 @@ import org.springframework.web.util.WebUtils;
  */
 @SuppressWarnings("serial")
 public class DispatcherServlet extends FrameworkServlet {
+	
+//	DispatcherServlet是一个位于org.springframework.web.servlet包中的类，并扩展了同一个包中的抽象类FrameworkServlet。
+//	它包含一些解析器的私有静态字段(用于本地化，视图，异常或上传文件)，映射处理器:handlerMapping和处理适配器:handlerAdapter(进入这个类的第一眼就能看到的)。
+//	DispatcherServlet非常重要的一个核心点就是是初始化策略的方法(protected void initStrategies（ApplicationContext context）)。
+//	在调用onRefresh方法时调用此方法。
+//	最后一次调用是在FrameworkServlet中通过initServletBean和initWebApplicationContext方法进行的(initServletBean方法中调用initWebApplicationContext，后者调用onRefresh(wac))。
+//	initServletBean通过所提供的这些策略生成我们所需要的应用程序上下文。
+//	其中每个策略都会产生一类在DispatcherServlet中用来处理传入请求的对象。
 
 	/** Well-known name for the MultipartResolver object in the bean factory for this namespace. */
 	public static final String MULTIPART_RESOLVER_BEAN_NAME = "multipartResolver";
@@ -729,6 +737,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 视图解析
 	 * Initialize the ViewResolvers used by this class.
 	 * <p>If no ViewResolver beans are defined in the BeanFactory for this
 	 * namespace, we default to InternalResourceViewResolver.
@@ -1328,6 +1337,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 渲染
 	 * Render the given ModelAndView.
 	 * <p>This is the last stage in handling a request. It may involve resolving the view by name.
 	 * @param mv the ModelAndView to render
