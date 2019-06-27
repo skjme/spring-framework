@@ -495,6 +495,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/**
+	 * 策略初始化
 	 * Initialize the strategy objects that this servlet uses.
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
