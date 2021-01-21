@@ -1,5 +1,4 @@
-# <img src="src/docs/asciidoc/images/spring-framework.png" width="80" height="80"> Spring Framework
-
+# Spring Framework
 
 阅读源码 5.1
 
