@@ -24,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -57,6 +58,11 @@ public class InitializeDatabaseIntegrationTests {
 		if (context != null) {
 			context.close();
 		}
+	}
+
+	@Test
+	public void mytest2021(){
+		BeanFactory bf = new ClassPathXmlApplicationContext();
 	}
 
 
